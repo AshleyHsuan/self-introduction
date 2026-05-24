@@ -33,15 +33,15 @@
 
   function applyTheme(theme) {
     const root = document.documentElement;
-    if (theme === "light") {
-      root.setAttribute("data-theme", "light");
+    if (theme === "dark") {
+      root.setAttribute("data-theme", "dark");
     } else {
       root.removeAttribute("data-theme");
     }
     if (themeToggle) {
       themeToggle.setAttribute(
         "aria-label",
-        theme === "light" ? "切換為深色主題" : "切換為淺色主題"
+        theme === "dark" ? "切換為淺色主題" : "切換為深色主題"
       );
     }
   }
@@ -53,8 +53,8 @@
   }
 
   function toggleTheme() {
-    const isLight = document.documentElement.getAttribute("data-theme") === "light";
-    const next = isLight ? "dark" : "light";
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    const next = isDark ? "light" : "dark";
     applyTheme(next);
     setStoredTheme(next);
   }
@@ -165,6 +165,28 @@
     }
   }
 
+  function initFilterPills() {
+    const pills = document.querySelectorAll(".pill[data-filter]");
+    const cards = document.querySelectorAll(".shot-card[data-category]");
+    if (!pills.length || !cards.length) return;
+
+    pills.forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        const filter = pill.getAttribute("data-filter");
+
+        pills.forEach(function (p) {
+          p.classList.toggle("is-active", p === pill);
+        });
+
+        cards.forEach(function (card) {
+          const category = card.getAttribute("data-category");
+          const show = filter === "all" || category === filter;
+          card.classList.toggle("is-hidden", !show);
+        });
+      });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     initTheme();
     if (themeToggle) {
@@ -173,6 +195,7 @@
     initNavToggle();
     initSmoothScroll();
     initReveal();
+    initFilterPills();
     initYear();
   });
 })();
